@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Plantonistas (On Duty Staff)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="bg-slate-50 text-slate-800 min-h-screen p-4 md:p-8">
+
+    <main class="max-w-6xl mx-auto">
+        
+        <!-- Cabeçalho com Ações -->
+        <div class="px-6 py-5 bg-slate-900 text-white flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-blue-500/20 text-blue-400 rounded-lg">
+                    <i data-lucide="user-check" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 id="formTitle" class="text-xl font-bold tracking-tight">Cadastrar Plantonista</h1>
+                    <p class="text-xs text-slate-400">Adicione ou gerencie os membros da equipe de plantão</p>
+                </div>
+            </div>
+            <a href="/listas/list_ondutystaff.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors">
+                <i data-lucide="list" class="w-4 h-4"></i>
+                Ver Tabela
+            </a>
+        </div>
+
+        <div class="p-6 md:p-8 space-y-8">
+            
+            <!-- Formulário -->
+            <form id="staffForm" class="space-y-4">
+                <input type="hidden" id="editingId" value="" />
+                
+                <div>
+                    <label for="nameInput" class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                        Nome Completo
+                    </label>
+                    <div class="relative rounded-xl shadow-sm">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <i data-lucide="user" class="w-5 h-5"></i>
+                        </div>
+                        <input type="text" id="nameInput" placeholder="Ex: Dr. Carlos Silva" required
+                            class="block w-full pl-11 pr-4 py-3 bg-slate-50 border-slate-200 rounded-xl text-sm placeholder-slate-400 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="colorInput" class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                        Cor de Identificação
+                    </label>
+                    <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-xl p-2.5">
+                        <input type="color" id="colorInput" value="#3b82f6" title="Escolha uma cor" 
+                            class="w-10 h-10 rounded-lg border-0 cursor-pointer p-0 bg-transparent shrink-0">
+                        <span id="colorHex" class="text-sm font-mono text-slate-600 font-medium">#3b82f6</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 pt-2">
+                    <button type="submit" id="submitBtn" 
+                        class="flex-1 inline-flex justify-center items-center gap-2 px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                        <span>Adicionar</span>
+                    </button>
+                    
+                    <button type="button" id="cancelBtn" onclick="window.location.href='/listas/list_ondutystaff.html'" style="display:none;"
+                        class="inline-flex justify-center items-center gap-2 px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-semibold rounded-xl transition-all">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                        <span>Cancelar</span>
+                    </button>
+                </div>
+            </form>
+    </main>
+
+<!-- Inclusão do Menu Lateral -->
+<script src="/cadastros/sidebar.js"></script>
+
+<script>
+    const API_URL = '/api/ondutystaff';
+
+    // Atualiza a prévia da cor hexadecimal
+    const colorInput = document.getElementById('colorInput');
+    const colorHex = document.getElementById('colorHex');
+    colorInput.addEventListener('input', (e) => {
+        colorHex.textContent = e.target.value;
+    });
+
+    // Carregar lista ao abrir
+    loadStaff();
+
+    // Renderiza ícones do Lucide
+    lucide.createIcons();
+
+    // Verificar se veio ID de edição pela URL
+    window.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const editId = urlParams.get('id');
+
+        if (editId) {
+            fetch(API_URL)
+                .then(res => res.json())
+                .then(staffList => {
+                    const member = staffList.find(m => m.id == editId);
+                    if (member) {
+                        startEdit(member.id, member.name, member.color);
+                    }
+                })
+                .catch(err => console.error('Erro ao buscar dados para edição:', err));
+        }
+    });
+
+    async function loadStaff() {
+        try {
+            const response = await fetch(API_URL);
+            const staffMembers = await response.json();
+
+            const list = document.getElementById('staffList');
+            list.innerHTML = '';
+
+            if (staffMembers.length === 0) {
+                list.innerHTML = `
+                    <li class="text-center py-6 text-slate-400 text-sm italic border border-dashed border-slate-200 rounded-xl">
+                        Nenhum plantonista cadastrado no momento.
+                    </li>`;
+                return;
+            }
+
+            staffMembers.forEach(member => {
+                const li = document.createElement('li');
+                li.className = 'flex items-center justify-between p-3.5 bg-slate-50 hover:bg-slate-100/80 border border-slate-200/60 rounded-xl transition-colors';
+                li.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="w-4 h-4 rounded-full border border-black/10 shadow-sm shrink-0" style="background-color: ${member.color}"></span>
+                        <span class="font-medium text-slate-700 text-sm">${escapeHtml(member.name)}</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <button class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar" onclick="startEdit(${member.id}, '${member.name.replace(/'/g, "\\'")}', '${member.color}')">
+                            <i data-lucide="pencil" class="w-4 h-4"></i>
+                        </button>
+                        <button class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Excluir" onclick="deleteStaff(${member.id})">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `;
+                list.appendChild(li);
+            });
+
+            lucide.createIcons();
+        } catch (error) {
+            console.error('Erro ao carregar plantonistas:', error);
+        }
+    }
+
+    document.getElementById('staffForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        const id = document.getElementById('editingId').value;
+        const name = document.getElementById('nameInput').value.trim();
+        const color = document.getElementById('colorInput').value;
+
+        if (!name) return;
+
+        try {
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `${API_URL}/${id}` : API_URL;
+
+            const response = await fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, color })
+            });
+
+            if (response.ok) {
+                window.location.href = '/listas/list_ondutystaff.html';
+            } else {
+                const errorData = await response.json();
+                alert('Erro ao salvar: ' + (errorData.error || 'Tente novamente.'));
+            }
+        } catch (error) {
+            console.error('Erro ao salvar plantonista:', error);
+            alert('Erro de conexão com o servidor.');
+        }
+    });
+
+    function startEdit(id, name, color) {
+        document.getElementById('editingId').value = id;
+        document.getElementById('nameInput').value = name;
+        document.getElementById('colorInput').value = color;
+        colorHex.textContent = color;
+
+        document.getElementById('formTitle').innerText = 'Editar Plantonista';
+        document.getElementById('submitBtn').innerHTML = `<i data-lucide="check" class="w-4 h-4"></i><span>Salvar</span>`;
+        document.getElementById('cancelBtn').style.display = 'inline-flex';
+        
+        lucide.createIcons();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetForm() {
+        document.getElementById('editingId').value = '';
+        document.getElementById('nameInput').value = '';
+        document.getElementById('colorInput').value = '#3b82f6';
+        colorHex.textContent = '#3b82f6';
+
+        document.getElementById('formTitle').innerText = 'Cadastrar Plantonista';
+        document.getElementById('submitBtn').innerHTML = `<i data-lucide="plus-circle" class="w-4 h-4"></i><span>Adicionar</span>`;
+        document.getElementById('cancelBtn').style.display = 'none';
+
+        lucide.createIcons();
+    }
+
+    async function deleteStaff(id) {
+        if (!confirm('Deseja realmente excluir este plantonista?')) return;
+
+        try {
+            const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+            if (response.ok) {
+                loadStaff();
+            } else {
+                alert('Erro ao excluir plantonista.');
+            }
+        } catch (error) {
+            console.error('Erro ao deletar plantonista:', error);
+        }
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+</script>
+
+</body>
+</html>

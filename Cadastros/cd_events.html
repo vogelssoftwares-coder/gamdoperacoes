@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Evento</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen p-4 md:p-8">
+
+    <main class="max-w-6xl mx-auto bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+        <!-- Cabeçalho -->
+        <div class="px-6 py-5 bg-slate-900 text-white flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="p-2.5 bg-blue-500/20 text-blue-400 rounded-xl">
+                    <i data-lucide="calendar" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 id="formTitle" class="text-xl font-bold tracking-tight">Cadastrar Evento</h1>
+                    <p class="text-xs text-slate-400">Associe clubes, plantonistas e datas de vendas</p>
+                </div>
+            </div>
+            <a href="/listas/list_events.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors">
+                <i data-lucide="list" class="w-4 h-4"></i>
+                Ver Tabela
+            </a>
+        </div>
+
+        <div class="p-6 md:p-8">
+            
+            <form id="eventForm" class="space-y-6">
+                <input type="hidden" id="editingId" value="" />
+                
+                <!-- Nome do Evento -->
+                <div>
+                    <label for="eventNameInput" class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                        Nome do Evento
+                    </label>
+                    <input type="text" id="eventNameInput" placeholder="Ex: Baile do Alok / Sunset Party" required
+                        class="block w-full px-4 py-3 bg-slate-50 border-slate-200 rounded-xl text-sm placeholder-slate-400 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all">
+                </div>
+
+                <!-- Selects: Clube e Plantonista (Sem obrigatoriedade no Plantonista) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="clubSelect" class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                            Clube
+                        </label>
+                        <select id="clubSelect" required class="block w-full px-4 py-3 bg-slate-50 border-slate-200 rounded-xl text-sm focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all">
+                            <option value="">Carregando clubes...</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="staffSelect" class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                            Plantonista Responsável <span class="text-slate-400 font-normal lowercase">(opcional)</span>
+                        </label>
+                        <select id="staffSelect" class="block w-full px-4 py-3 bg-slate-50 border-slate-200 rounded-xl text-sm focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all">
+                            <option value="">Selecione um plantonista...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Mês, Data do Evento e Hora (Hora opcional) -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label for="monthSelect" class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                            Mês
+                        </label>
+                        <select id="monthSelect" required class="block w-full px-4 py-3 bg-slate-50 border-slate-200 rounded-xl text-sm focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all">
+                            <option value="">Selecione...</option>
+                            <option value="Janeiro">Janeiro</option>
+                            <option value="Fevereiro">Fevereiro</option>
+                            <option value="Março">Março</option>
+                            <option value="Abril">Abril</option>
+                            <option value="Maio">Maio</option>
+                            <option value="Junho">Junho</option>
+                            <option value="Julho">Julho</option>
+                            <option value="Agosto">Agosto</option>
+                            <option value="Setembro">Setembro</option>
+                            <option value="Outubro">Outubro</option>
+                            <option value="Novembro">Novembro</option>
+                            <option value="Dezembro">Dezembro</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="eventDateInput" class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                            Data do Evento
+                        </label>
+                        <input type="date" id="eventDateInput" required
+                            class="block w-full px-4 py-3 bg-slate-50 border-slate-200 rounded-xl text-sm focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all">
+                    </div>
+
+                    <div>
+                        <label for="eventTimeInput" class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                            Hora do Evento <span class="text-slate-400 font-normal lowercase">(opcional)</span>
+                        </label>
+                        <input type="time" id="eventTimeInput"
+                            class="block w-full px-4 py-3 bg-slate-50 border-slate-200 rounded-xl text-sm focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all">
+                    </div>
+                </div>
+
+                <!-- Início das Vendas (Opcional) -->
+                <div>
+                    <label for="salesStartDateInput" class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                        Início das Vendas <span class="text-slate-400 font-normal lowercase">(opcional)</span>
+                    </label>
+                    <input type="datetime-local" id="salesStartDateInput"
+                        class="block w-full px-4 py-3 bg-slate-50 border-slate-200 rounded-xl text-sm focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all">
+                </div>
+
+                <!-- Seção Valores Financeiros -->
+                <div class="pt-4 border-t border-slate-100">
+                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-4">Valores Financeiros</label>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                        <div>
+                            <label for="totalTransactedInput" class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                                TOTAL TRANSACIONADO (R$)
+                            </label>
+                            <input type="number" step="0.01" id="totalTransactedInput" placeholder="0.00" oninput="calculateAverageTicket()"
+                                class="block w-full px-4 py-2.5 bg-slate-50 border-slate-200 rounded-xl text-sm focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all">
+                        </div>
+
+                        <div>
+                            <label for="totalSplitAbInput" class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                                TOTAL SPLIT A&B (R$)
+                            </label>
+                            <input type="number" step="0.01" id="totalSplitAbInput" placeholder="0.00"
+                                class="block w-full px-4 py-2.5 bg-slate-50 border-slate-200 rounded-xl text-sm focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all">
+                        </div>
+
+                        <div>
+                            <label for="splitTicketsInput" class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                                SPLIT INGRESSOS (R$)
+                            </label>
+                            <input type="number" step="0.01" id="splitTicketsInput" placeholder="0.00"
+                                class="block w-full px-4 py-2.5 bg-slate-50 border-slate-200 rounded-xl text-sm focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                        <div>
+                            <label for="qtyTicketsInput" class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                                QTD INGRESSOS
+                            </label>
+                            <input type="number" id="qtyTicketsInput" placeholder="0" oninput="calculateAverageTicket()"
+                                class="block w-full px-4 py-2.5 bg-slate-50 border-slate-200 rounded-xl text-sm focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all">
+                        </div>
+
+                        <div>
+                            <label for="qtyCourtesiesInput" class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                                QTD CORTESIAS
+                            </label>
+                            <input type="number" id="qtyCourtesiesInput" placeholder="0"
+                                class="block w-full px-4 py-2.5 bg-slate-50 border-slate-200 rounded-xl text-sm focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all">
+                        </div>
+
+                        <div>
+                            <label for="totalTicketsInput" class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                                TOTAL DE INGRESSOS
+                            </label>
+                            <input type="number" id="totalTicketsInput" placeholder="0"
+                                class="block w-full px-4 py-2.5 bg-slate-50 border-slate-200 rounded-xl text-sm font-bold text-purple-700 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label for="totalCourtesiesInput" class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                                TOTAL DE CORTESIAS
+                            </label>
+                            <input type="number" id="totalCourtesiesInput" placeholder="0"
+                                class="block w-full px-4 py-2.5 bg-slate-50 border-slate-200 rounded-xl text-sm font-bold text-purple-700 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all">
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                                TICKET MÉDIO (R$)
+                            </label>
+                            <div id="averageTicketDisplay" class="w-full px-4 py-2.5 bg-purple-100/60 border border-purple-200/80 rounded-xl text-sm font-bold text-purple-800 flex items-center">
+                                R$ 0,00
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Opções (Toggles) -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-3">Opções</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        
+                        <label class="flex items-center justify-between p-3 bg-slate-50 border border-slate-200/80 rounded-xl cursor-pointer hover:bg-slate-100 transition-colors">
+                            <span class="text-sm font-medium text-slate-700">Ingressos</span>
+                            <input type="checkbox" id="hasTickets" class="w-5 h-5 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
+                        </label>
+
+                        <label class="flex items-center justify-between p-3 bg-slate-50 border border-slate-200/80 rounded-xl cursor-pointer hover:bg-slate-100 transition-colors">
+                            <span class="text-sm font-medium text-slate-700">Cortesias</span>
+                            <input type="checkbox" id="hasCourtesies" class="w-5 h-5 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
+                        </label>
+
+                        <label class="flex items-center justify-between p-3 bg-slate-50 border border-slate-200/80 rounded-xl cursor-pointer hover:bg-slate-100 transition-colors">
+                            <span class="text-sm font-medium text-slate-700">A&B</span>
+                            <input type="checkbox" id="hasAb" class="w-5 h-5 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
+                        </label>
+
+                        <label class="flex items-center justify-between p-3 bg-slate-50 border border-slate-200/80 rounded-xl cursor-pointer hover:bg-slate-100 transition-colors">
+                            <span class="text-sm font-medium text-slate-700">Transações</span>
+                            <input type="checkbox" id="hasTransactions" class="w-5 h-5 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
+                        </label>
+
+                        <label class="flex items-center justify-between p-3 bg-slate-50 border border-slate-200/80 rounded-xl cursor-pointer hover:bg-slate-100 transition-colors">
+                            <span class="text-sm font-medium text-slate-700">Gamd X Zoop</span>
+                            <input type="checkbox" id="hasGamdZoop" class="w-5 h-5 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
+                        </label>
+
+                        <label class="flex items-center justify-between p-3 bg-slate-50 border border-slate-200/80 rounded-xl cursor-pointer hover:bg-slate-100 transition-colors">
+                            <span class="text-sm font-medium text-slate-700">Split</span>
+                            <input type="checkbox" id="hasSplit" class="w-5 h-5 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
+                        </label>
+
+                        <label class="flex items-center justify-between p-3 bg-slate-50 border border-slate-200/80 rounded-xl cursor-pointer hover:bg-slate-100 transition-colors">
+                            <span class="text-sm font-medium text-slate-700">Faturamento (NF)</span>
+                            <input type="checkbox" id="hasInvoicing" class="w-5 h-5 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
+                        </label>
+
+                    </div>
+                </div>
+
+                <!-- Botões de Ação -->
+                <div class="flex items-center gap-3 pt-4 border-t border-slate-100">
+                    <button type="submit" id="submitBtn" 
+                        class="flex-1 inline-flex justify-center items-center gap-2 px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-lg shadow-blue-500/25 transition-all">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                        <span>Salvar Evento</span>
+                    </button>
+                    
+                    <button type="button" id="cancelBtn" onclick="resetForm()" style="display:none;"
+                        class="inline-flex justify-center items-center gap-2 px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-semibold rounded-xl transition-all">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                        <span>Cancelar</span>
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </main>
+
+<script src="/cadastros/sidebar.js"></script>
+<script>
+    const API_EVENTS = '/api/events';
+    const API_CLUBS = '/api/clubs';
+    const API_STAFF = '/api/ondutystaff';
+
+    lucide.createIcons();
+    init();
+
+    async function init() {
+        await Promise.all([loadClubs(), loadStaff()]);
+        
+        const editId = new URLSearchParams(window.location.search).get('id');
+        if (editId) {
+            try {
+                const res = await fetch(API_EVENTS);
+                const events = await res.json();
+                const event = events.find(e => e.id == editId);
+                if (event) startEdit(event);
+            } catch (err) {
+                console.error('Erro ao carregar dados do evento:', err);
+            }
+        }
+    }
+
+    async function loadClubs() {
+        try {
+            const res = await fetch(API_CLUBS);
+            const clubs = await res.json();
+            const select = document.getElementById('clubSelect');
+            select.innerHTML = '<option value="">Selecione um clube...</option>';
+            clubs.forEach(c => {
+                select.innerHTML += `<option value="${c.id}">${c.name_club}</option>`;
+            });
+        } catch (err) {
+            console.error('Erro ao carregar clubes:', err);
+        }
+    }
+
+    async function loadStaff() {
+        try {
+            const res = await fetch(API_STAFF);
+            const staff = await res.json();
+            const select = document.getElementById('staffSelect');
+            select.innerHTML = '<option value="">Selecione um plantonista...</option>';
+            staff.forEach(s => {
+                select.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+            });
+        } catch (err) {
+            console.error('Erro ao carregar plantonistas:', err);
+        }
+    }
+
+    document.getElementById('eventForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const id = document.getElementById('editingId').value;
+        const payload = {
+            event_name: document.getElementById('eventNameInput').value.trim(),
+            club_id: document.getElementById('clubSelect').value,
+            staff_id: document.getElementById('staffSelect').value || null,
+            month: document.getElementById('monthSelect').value,
+            event_date: document.getElementById('eventDateInput').value,
+            event_time: document.getElementById('eventTimeInput').value || null,
+            sales_start_date: document.getElementById('salesStartDateInput').value || null,
+            
+            has_tickets: document.getElementById('hasTickets').checked,
+            has_courtesies: document.getElementById('hasCourtesies').checked,
+            has_ab: document.getElementById('hasAb').checked,
+            has_transactions: document.getElementById('hasTransactions').checked,
+            has_gamd_zoop: document.getElementById('hasGamdZoop').checked,
+            has_split: document.getElementById('hasSplit').checked,
+            has_invoicing: document.getElementById('hasInvoicing').checked,
+
+            total_transacted: parseFloat(document.getElementById('totalTransactedInput').value) || null,
+            total_split_ab: parseFloat(document.getElementById('totalSplitAbInput').value) || null,
+            split_tickets: parseFloat(document.getElementById('splitTicketsInput').value) || null,
+            qty_tickets: parseInt(document.getElementById('qtyTicketsInput').value) || null,
+            qty_courtesies: parseInt(document.getElementById('qtyCourtesiesInput').value) || null,
+            total_tickets: parseInt(document.getElementById('totalTicketsInput').value) || null,
+            total_courtesies: parseInt(document.getElementById('totalCourtesiesInput').value) || null
+        };
+
+        try {
+            const res = await fetch(id ? `${API_EVENTS}/${id}` : API_EVENTS, {
+                method: id ? 'PUT' : 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                window.location.href = '/listas/list_events.html';
+            } else {
+                const errData = await res.json();
+                alert('Erro ao salvar evento: ' + (errData.error || 'Verifique os dados enviados.'));
+            }
+        } catch (err) {
+            console.error('Erro na requisição:', err);
+            alert('Erro de conexão ao salvar evento.');
+        }
+    });
+
+    function startEdit(event) {
+        document.getElementById('editingId').value = event.id;
+        document.getElementById('eventNameInput').value = event.event_name || '';
+        document.getElementById('clubSelect').value = event.club_id || '';
+        document.getElementById('staffSelect').value = event.staff_id || '';
+        document.getElementById('monthSelect').value = event.month || '';
+        
+        if (event.event_date) {
+            document.getElementById('eventDateInput').value = event.event_date.split('T')[0];
+        }
+        document.getElementById('eventTimeInput').value = event.event_time || '';
+        
+        if (event.sales_start_date) {
+            const salesDate = new Date(event.sales_start_date);
+            salesDate.setMinutes(salesDate.getMinutes() - salesDate.getTimezoneOffset());
+            document.getElementById('salesStartDateInput').value = salesDate.toISOString().slice(0,16);
+        } else {
+            document.getElementById('salesStartDateInput').value = '';
+        }
+
+        // Toggles
+        document.getElementById('hasTickets').checked = !!event.has_tickets;
+        document.getElementById('hasCourtesies').checked = !!event.has_courtesies;
+        document.getElementById('hasAb').checked = !!event.has_ab;
+        document.getElementById('hasTransactions').checked = !!event.has_transactions;
+        document.getElementById('hasGamdZoop').checked = !!event.has_gamd_zoop;
+        document.getElementById('hasSplit').checked = !!event.has_split;
+        document.getElementById('hasInvoicing').checked = !!event.has_invoicing;
+
+        // Valores Financeiros
+        document.getElementById('totalTransactedInput').value = event.total_transacted || '';
+        document.getElementById('totalSplitAbInput').value = event.total_split_ab || '';
+        document.getElementById('splitTicketsInput').value = event.split_tickets || '';
+        document.getElementById('qtyTicketsInput').value = event.qty_tickets || '';
+        document.getElementById('qtyCourtesiesInput').value = event.qty_courtesies || '';
+        document.getElementById('totalTicketsInput').value = event.total_tickets || '';
+        document.getElementById('totalCourtesiesInput').value = event.total_courtesies || '';
+
+        calculateAverageTicket();
+
+        document.getElementById('formTitle').innerText = 'Editar Evento';
+        document.getElementById('submitBtn').innerHTML = `<i data-lucide="check" class="w-4 h-4"></i><span>Salvar Alterações</span>`;
+        document.getElementById('cancelBtn').style.display = 'inline-flex';
+        
+        lucide.createIcons();
+    }
+
+    function resetForm() {
+        document.getElementById('editingId').value = '';
+        document.getElementById('eventForm').reset();
+        document.getElementById('averageTicketDisplay').textContent = 'R$ 0,00';
+        document.getElementById('formTitle').innerText = 'Cadastrar Evento';
+        document.getElementById('submitBtn').innerHTML = `<i data-lucide="plus-circle" class="w-4 h-4"></i><span>Salvar Evento</span>`;
+        document.getElementById('cancelBtn').style.display = 'none';
+        
+        lucide.createIcons();
+    }
+
+    function calculateAverageTicket() {
+        const totalTransacted = parseFloat(document.getElementById('totalTransactedInput').value) || 0;
+        const qtyTickets = parseInt(document.getElementById('qtyTicketsInput').value) || 0;
+        const display = document.getElementById('averageTicketDisplay');
+
+        if (qtyTickets > 0 && totalTransacted > 0) {
+            const averageTicket = totalTransacted / qtyTickets;
+            display.textContent = `R$ ${averageTicket.toLocaleString('pt-BR', { 
+                minimumFractionDigits: 2, 
+                maximumFractionDigits: 2 
+            })}`;
+        } else {
+            display.textContent = 'R$ 0,00';
+        }
+    }
+</script>
+
+</body>
+</html>

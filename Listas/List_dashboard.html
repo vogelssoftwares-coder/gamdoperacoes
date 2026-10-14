@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Operacional - GAMD</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen p-4 md:p-8">
+
+    <main class="max-w-6xl mx-auto space-y-8">
+        
+        <!-- Header Principal -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-100 shadow-xl shadow-slate-200/50">
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight text-slate-900">Dashboard de Operações</h1>
+                <p class="text-xs text-slate-500 mt-1">Visão geral consolidada dos eventos, taxas de split e equipe</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="/cadastros/cd_events.html" class="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-lg shadow-blue-500/25 transition-all">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                    <span>Novo Evento</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Cards com as Métricas Solicitadas -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            
+            <!-- 1. Total de Eventos -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-lg shadow-slate-200/40 flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total de Eventos</span>
+                    <h3 id="statTotalEvents" class="text-3xl font-bold text-slate-900 mt-1">0</h3>
+                    <p class="text-xs text-slate-500 mt-1">Eventos registrados no sistema</p>
+                </div>
+                <div class="p-3.5 bg-blue-500/10 text-blue-600 rounded-2xl">
+                    <i data-lucide="calendar" class="w-7 h-7"></i>
+                </div>
+            </div>
+
+            <!-- 2. Split Ingressos (Média) -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-lg shadow-slate-200/40 flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Split Ingressos (Média)</span>
+                    <h3 id="statSplitIng" class="text-3xl font-bold text-slate-900 mt-1">0.00%</h3>
+                    <p class="text-xs text-slate-500 mt-1">Média configurada nos clubes</p>
+                </div>
+                <div class="p-3.5 bg-emerald-500/10 text-emerald-600 rounded-2xl">
+                    <i data-lucide="ticket" class="w-7 h-7"></i>
+                </div>
+            </div>
+
+            <!-- 3. Split A&B (Média) -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-lg shadow-slate-200/40 flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Split A&B (Média)</span>
+                    <h3 id="statSplitAb" class="text-3xl font-bold text-slate-900 mt-1">0.00%</h3>
+                    <p class="text-xs text-slate-500 mt-1">Média de Alimentos & Bebidas</p>
+                </div>
+                <div class="p-3.5 bg-amber-500/10 text-amber-600 rounded-2xl">
+                    <i data-lucide="utensils" class="w-7 h-7"></i>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Seção do Gráfico e Resumo -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Gráfico de Eventos por Mês -->
+            <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-100 shadow-lg shadow-slate-200/40 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Distribuição de Eventos por Mês</h2>
+                    <i data-lucide="bar-chart-2" class="w-5 h-5 text-slate-400"></i>
+                </div>
+                <div class="h-64">
+                    <canvas id="eventsChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Resumo Rápido e Atalhos -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-lg shadow-slate-200/40 flex flex-col justify-between space-y-4">
+                <div>
+                    <h2 class="text-sm font-bold text-slate-700 uppercase tracking-wider mb-4">Acesso Rápido às Tabelas</h2>
+                    <div class="space-y-3">
+                        <a href="/listas/list_events.html" class="flex items-center justify-between p-3.5 bg-slate-50 hover:bg-slate-100/80 border border-slate-200/60 rounded-xl transition-colors group">
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="calendar" class="w-5 h-5 text-blue-600"></i>
+                                <span class="text-sm font-semibold text-slate-700">Ver Tabela de Eventos</span>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition-transform"></i>
+                        </a>
+
+                        <a href="/listas/list_clubs.html" class="flex items-center justify-between p-3.5 bg-slate-50 hover:bg-slate-100/80 border border-slate-200/60 rounded-xl transition-colors group">
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="building-2" class="w-5 h-5 text-emerald-600"></i>
+                                <span class="text-sm font-semibold text-slate-700">Ver Tabela de Clubes</span>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition-transform"></i>
+                        </a>
+
+                        <a href="/listas/list_ondutystaff.html" class="flex items-center justify-between p-3.5 bg-slate-50 hover:bg-slate-100/80 border border-slate-200/60 rounded-xl transition-colors group">
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="users" class="w-5 h-5 text-purple-600"></i>
+                                <span class="text-sm font-semibold text-slate-700">Ver Plantonistas</span>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-blue-50 border border-blue-100 rounded-xl text-xs text-blue-800 space-y-1">
+                    <p class="font-bold">Dica da Operação</p>
+                    <p>Mantenha as porcentagens de split dos clubes atualizadas para obter médias financeiras precisas no painel.</p>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Inclusão do Menu Lateral -->
+    <script src="/cadastros/sidebar.js"></script>
+
+<script>
+    lucide.createIcons();
+    loadDashboardStats();
+
+    async function loadDashboardStats() {
+    try {
+        const response = await fetch('/api/dashboard/stats');
+        const data = await response.json();
+        
+        const m = data.metrics;
+
+        // Atualiza o contador com o resultado do COUNT(*) do banco
+        document.getElementById('statTotalEvents').textContent = m.total_events || 0;
+        document.getElementById('statSplitIng').textContent = `${parseFloat(m.avg_split_ing || 0).toFixed(2)}%`;
+        document.getElementById('statSplitAb').textContent = `${parseFloat(m.avg_split_ab || 0).toFixed(2)}%`;
+
+        renderChart(data.chartData);
+    } catch (error) {
+        console.error('Erro ao carregar estatísticas:', error);
+    }
+}
+
+    function renderChart(chartData) {
+        const ctx = document.getElementById('eventsChart').getContext('2d');
+        
+        const labels = chartData.length > 0 ? chartData.map(item => item.month) : ['Sem dados'];
+        const values = chartData.length > 0 ? chartData.map(item => item.total) : [0];
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Quantidade de Eventos',
+                    data: values,
+                    backgroundColor: '#3b82f6',
+                    borderRadius: 8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1, precision: 0 }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

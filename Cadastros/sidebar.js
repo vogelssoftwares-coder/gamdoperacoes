@@ -1,0 +1,110 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const currentPath = window.location.pathname;
+
+    const sidebarHTML = `
+    <!-- Mobile Toggle Button -->
+    <div class="lg:hidden fixed top-4 left-4 z-50">
+        <button id="toggleSidebar" class="p-2.5 bg-slate-900 text-white rounded-xl shadow-lg hover:bg-slate-800 transition-colors">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+    </div>
+
+    <!-- Overlay Mobile -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden lg:hidden"></div>
+
+    <!-- Sidebar Container -->
+    <aside id="sidebar" class="fixed top-0 left-0 bottom-0 w-64 bg-slate-900 text-slate-300 z-50 flex flex-col justify-between -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out border-r border-slate-800">
+        <div>
+            <!-- Logo / Branding -->
+            <div class="px-6 py-6 border-b border-slate-800/80 flex items-center gap-3">
+                <div class="p-2 bg-blue-600 rounded-xl text-white shadow-lg shadow-blue-600/30">
+                    <i data-lucide="layers" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h2 class="font-bold text-white tracking-wide text-base leading-tight">GAMD Operações</h2>
+                    <span class="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">Painel Eventos</span>
+                </div>
+            </div>
+
+            <!-- Navegação Principal -->
+            <nav class="p-4 space-y-6">
+                <!-- Seção: Visões & Listas -->
+                <div>
+                    <p class="px-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Visões Gerais</p>
+                    <div class="space-y-1">
+                        <a href="/listas/list_dashboard.html" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${currentPath.includes('list_dashboard') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25' : 'hover:bg-slate-800/60 hover:text-white'}">
+                            <i data-lucide="home" class="w-4 h-4"></i>
+                            <span>Dashboard</span>
+                        </a>
+                        <a href="/listas/list_events.html" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${currentPath.includes('list_events') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25' : 'hover:bg-slate-800/60 hover:text-white'}">
+                            <i data-lucide="calendar" class="w-4 h-4"></i>
+                            <span>Eventos</span>
+                        </a>
+                        <a href="/listas/list_clubs.html" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${currentPath.includes('list_clubs') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25' : 'hover:bg-slate-800/60 hover:text-white'}">
+                            <i data-lucide="building-2" class="w-4 h-4"></i>
+                            <span>Clubes</span>
+                        </a>
+                        <a href="/listas/list_ondutystaff.html" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${currentPath.includes('list_ondutystaff') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25' : 'hover:bg-slate-800/60 hover:text-white'}">
+                            <i data-lucide="users" class="w-4 h-4"></i>
+                            <span>Plantonistas</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Seção: Formulários de Cadastro -->
+                <div>
+                    <p class="px-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Novos Cadastros</p>
+                    <div class="space-y-1">
+                        <a href="/cadastros/cd_events.html" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${currentPath.includes('cd_events') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25' : 'hover:bg-slate-800/60 hover:text-white'}">
+                            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                            <span>Novo Evento</span>
+                        </a>
+                        <a href="/cadastros/cd_clubs.html" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${currentPath.includes('cd_clubs') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25' : 'hover:bg-slate-800/60 hover:text-white'}">
+                            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                            <span>Novo Clube</span>
+                        </a>
+                        <a href="/cadastros/cd_ondutystaff.html" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${currentPath.includes('cd_ondutystaff') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25' : 'hover:bg-slate-800/60 hover:text-white'}">
+                            <i data-lucide="user-plus" class="w-4 h-4"></i>
+                            <span>Novo Plantonista</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Rodapé do Menu Lateral -->
+        <div class="p-4 border-t border-slate-800/80">
+            <div class="flex items-center gap-3 px-3 py-2.5 bg-slate-800/40 rounded-xl">
+                <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                <span class="text-xs text-slate-400 font-medium">Sistema On-line</span>
+            </div>
+        </div>
+    </aside>
+    `;
+
+    // Injeta o HTML no início do body
+    document.body.insertAdjacentHTML('afterbegin', sidebarHTML);
+
+    // Adiciona margem à esquerda no body para dar espaço ao menu em telas desktop
+    document.body.classList.add('lg:pl-64');
+
+    // Lógica Toggle Mobile
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.getElementById('toggleSidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+
+    function toggleMenu() {
+        if (sidebar && overlay) {
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+    }
+
+    if (toggleBtn) toggleBtn.addEventListener('click', toggleMenu);
+    if (overlay) overlay.addEventListener('click', toggleMenu);
+
+    // Recria os ícones Lucide para renderizar o menu recém-injetado
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+});
